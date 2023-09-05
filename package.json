@@ -1,0 +1,21 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxthq/ui": "^2.7.0",
+    "nuxt": "^3.7.0",
+    "prisma": "^5.2.0"
+  },
+  "dependencies": {
+    "@prisma/client": "5.2.0",
+    "zod": "^3.22.2"
+  }
+}
