@@ -13,4 +13,10 @@ export default defineNuxtConfig({
   colorMode: {
     preference: "dark",
   },
+  auth: {
+    origin:
+      process.env.ENVIRONMENT === "production"
+        ? "https://novuel.vercel.app"
+        : "http://localhost:3000",
+  },
 });
