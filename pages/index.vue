@@ -33,7 +33,7 @@ async function continueWithGoogle() {
 
 watchEffect(async () => {
   if (status.value === "authenticated") {
-    await useRouter().push("/app");
+    await useRouter().push("/files");
   }
 });
 </script>

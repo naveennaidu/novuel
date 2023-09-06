@@ -59,7 +59,7 @@
         </div>
       </div>
       <div
-        v-if="files.length === 0"
+        v-if="files.length === 0 && !loading"
         class="text-center py-10 text-gray-600 dark:text-gray-300"
       >
         <UIcon name="i-heroicons-folder-open" class="text-4xl mb-4" />
@@ -83,7 +83,7 @@ definePageMeta({ middleware: "auth" });
 const slugs = computed(() => useRoute().params.slugs as string[]);
 
 const pages = computed(() => {
-  const pages = [{ name: "Documents", to: "/app" }];
+  const pages = [{ name: "Documents", to: "/files" }];
   if (slugs.value.length === 0) return pages;
   slugs.value.forEach((slug) => {
     pages.push({
@@ -103,17 +103,23 @@ const files = ref<
   }[]
 >([]);
 
+const loading = ref(false);
 async function getFiles() {
+  loading.value = true;
   const { data } = await useFetch("/api/files", {
     query:
       slugs.value.length > 0
         ? { folderId: slugs.value[slugs.value.length - 1].split("--")[1] }
         : undefined,
   });
+  loading.value = false;
   files.value = data.value?.files ?? [];
 }
 
-await getFiles();
+onMounted(async () => {
+  await nextTick();
+  await getFiles();
+});
 
 const showFolderForm = ref(false);
 watch(

@@ -3,7 +3,7 @@
     <div
       class="flex items-center justify-between px-4 py-1 dark:bg-gray-800/30 bg-gray-200/30"
     >
-      <NuxtLink to="/app">Novuel</NuxtLink>
+      <NuxtLink to="/files">Novuel</NuxtLink>
       <div class="flex items-center">
         <div v-if="status === 'authenticated'" class="text-sm">
           {{ data?.user?.email }}
