@@ -5,7 +5,7 @@
         <div class="flex items-center">
           <NuxtLink
             :to="page.to"
-            class="mr-4 text-sm font-medium text-gray-800 dark:text-gray-200 hover:dark:text-gray-400 hover:text-gray-600"
+            class="mr-4 font-medium text-gray-800 dark:text-gray-200 hover:dark:text-gray-400 hover:text-gray-600"
           >
             {{ page.name }}
           </NuxtLink>

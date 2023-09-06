@@ -14,9 +14,9 @@ async function continueWithGoogle() {
   await signIn("google");
 }
 
-watchEffect(() => {
+watchEffect(async () => {
   if (status.value === "authenticated") {
-    useRouter().push("/app");
+    await useRouter().push("/app");
   }
 });
 </script>

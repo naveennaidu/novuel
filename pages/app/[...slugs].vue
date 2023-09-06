@@ -1,11 +1,8 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 mx-auto max-w-4xl">
     <div class="flex items-center justify-between">
       <Breadcrumb :pages="pages" />
       <div class="flex items-center gap-x-2">
-        <div class="flex-1">
-          <UInput placeholder="Search" />
-        </div>
         <UButton
           color="white"
           variant="solid"
@@ -24,24 +21,57 @@
         </UButton>
       </div>
     </div>
-    <div>
-      <div v-for="folder in folders" :key="folder.id" class="mt-4">
-        <UCard
-          class="cursor-pointer"
+    <div class="rounded ring-1 ring-gray-100 dark:ring-gray-800 p-2 mt-4">
+      <div
+        v-for="(folder, index) in folders"
+        :key="folder.id"
+        :class="index < folders.length - 1 ? 'mb-2' : ''"
+      >
+        <div
+          class="cursor-pointer hover:dark:bg-gray-800/40 hover:bg-gray-200/40 p-2 rounded"
           @click="
             useRouter().push({ params: { slugs: [...slugs, `${folder.id}`] } })
           "
         >
-          {{ folder.name }}
-        </UCard>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <UIcon name="i-heroicons-folder" class="mr-2" />
+              <div>
+                {{ folder.name }}
+              </div>
+            </div>
+            <div class="text-xs text-gray-600 dark:text-gray-300">
+              {{ new Date(folder.updatedAt).toLocaleDateString() }}
+            </div>
+          </div>
+        </div>
       </div>
-      <div v-for="document in documents" :key="document.id" class="mt-4">
-        <UCard
-          class="cursor-pointer"
+      <div
+        v-for="(document, index) in documents"
+        :key="document.id"
+        :class="index < documents.length - 1 ? 'mb-2' : ''"
+      >
+        <div
+          class="cursor-pointer hover:dark:bg-gray-800/40 hover:bg-gray-200/40 p-2 rounded"
           @click="useRouter().push(`/d/${document.id}`)"
         >
-          {{ document.title }} doc
-        </UCard>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <UIcon name="i-heroicons-document-text" class="mr-2" />
+              <div>{{ document.title ? document.title : "Untitled" }}</div>
+            </div>
+            <div class="text-xs text-gray-600 dark:text-gray-300">
+              {{ new Date(document.updatedAt).toLocaleDateString() }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="documents.length === 0 && folders.length === 0"
+        class="text-center py-10 text-gray-600 dark:text-gray-300"
+      >
+        <UIcon name="i-heroicons-folder-open" class="text-4xl mb-4" />
+        <div class="">No documents or folders</div>
       </div>
     </div>
     <FolderForm
@@ -70,7 +100,7 @@ const pages = computed(() => {
   return pages;
 });
 
-const folders = ref<{ id: number; name: string }[]>([]);
+const folders = ref<{ id: number; name: string; updatedAt: string }[]>([]);
 
 async function getFolders() {
   const { data } = await useFetch("/api/folders", {
@@ -94,7 +124,7 @@ watch(
   }
 );
 
-const documents = ref<{ id: number; title: string }[]>([]);
+const documents = ref<{ id: number; title: string; updatedAt: string }[]>([]);
 async function getDocuments() {
   const { data } = await useFetch("/api/documents", {
     query:

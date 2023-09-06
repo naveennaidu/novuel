@@ -23,6 +23,7 @@
     "@prisma/client": "5.2.0",
     "@sidebase/nuxt-parse": "^0.3.0",
     "next-auth": "4.21.1",
+    "novel-vue": "^0.0.3",
     "zod": "^3.22.2"
   }
 }

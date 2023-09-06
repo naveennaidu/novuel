@@ -1,8 +1,8 @@
 import { getServerSession } from "#auth";
-import { z, parseBodyAs } from "@sidebase/nuxt-parse";
+import { z, parseParamsAs } from "@sidebase/nuxt-parse";
 
-const bodySchema = z.object({
-  folderId: z
+const paramSchema = z.object({
+  documentId: z
     .string()
     .optional()
     .transform((value) => Number(value)),
@@ -10,7 +10,7 @@ const bodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const session = await getServerSession(event);
-  const body = await parseBodyAs(event, bodySchema);
+  const { documentId } = parseParamsAs(event, paramSchema);
 
   if (!session) {
     throw createError({ statusMessage: "Unauthenticated", statusCode: 403 });
@@ -18,13 +18,14 @@ export default defineEventHandler(async (event) => {
 
   const { prisma } = event.context;
 
-  const document = await prisma.document.create({
-    data: {
+  const document = await prisma.document.findUnique({
+    where: {
+      id: documentId,
       userId: session.user.id,
-      title: "",
-      content: "{}",
-      folderId: body.folderId,
     },
   });
+  if (!document) {
+    throw createError({ statusMessage: "Not Found", statusCode: 404 });
+  }
   return { document };
 });
