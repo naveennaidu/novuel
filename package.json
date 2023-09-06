@@ -6,16 +6,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "prisma:migrate:dev": "npx prisma migrate dev",
+    "prisma:migrate:generate": "npx prisma generate",
+    "prisma:studio": "npx prisma studio"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "^2.7.0",
+    "@sidebase/nuxt-auth": "^0.6.0-beta.5",
     "nuxt": "^3.7.0",
     "prisma": "^5.2.0"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/client": "5.2.0",
+    "@sidebase/nuxt-parse": "^0.3.0",
+    "next-auth": "4.21.1",
     "zod": "^3.22.2"
   }
 }

@@ -1,6 +1,17 @@
 <template>
-  <div>
-    <div class="absolute top-1 right-1">
+  <div class="h-screen w-screen">
+    <div class="flex items-center justify-end">
+      <div v-if="status === 'authenticated'" class="text-sm">
+        {{ data?.user?.email }}
+      </div>
+      <UButton
+        v-if="status === 'authenticated'"
+        @click="signOut"
+        variant="link"
+        size="sm"
+      >
+        (Sign Out)
+      </UButton>
       <UButton
         :icon="
           colorMode.value === 'dark' ? 'i-heroicons-sun' : 'i-heroicons-moon'
@@ -22,18 +33,11 @@
 useHead({
   htmlAttrs: {
     lang: "en",
-    class: "antialiased [font-feature-settings:'ss01'] h-full",
-  },
-  bodyAttrs: {
-    class: "h-full",
+    class: "antialiased [font-feature-settings:'ss01']",
   },
 });
 
 const colorMode = useColorMode();
-</script>
 
-<style>
-#__nuxt {
-  height: 100%;
-}
-</style>
+const { status, data, signOut } = useAuth();
+</script>
