@@ -22,52 +22,44 @@
       </div>
     </div>
     <div class="rounded ring-1 ring-gray-100 dark:ring-gray-800 p-2 mt-4">
-      <div
-        v-for="(folder, index) in folders"
-        :key="folder.id"
-        :class="index < folders.length - 1 ? 'mb-2' : ''"
-      >
+      <div v-for="(file, index) in files" :key="file.id">
         <div
           class="cursor-pointer hover:dark:bg-gray-800/40 hover:bg-gray-200/40 p-2 rounded"
           @click="
-            useRouter().push({ params: { slugs: [...slugs, `${folder.id}`] } })
+            file.type === 'folder'
+              ? useRouter().push({
+                  params: {
+                    slugs: [
+                      ...slugs,
+                      `${stringToSlug(file.title)}--${file.id}`,
+                    ],
+                  },
+                })
+              : useRouter().push(`/d/${file.id}`)
           "
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <UIcon name="i-heroicons-folder" class="mr-2" />
+              <UIcon
+                :name="
+                  file.type === 'document'
+                    ? 'i-heroicons-document-text'
+                    : 'i-heroicons-folder'
+                "
+                class="mr-2"
+              />
               <div>
-                {{ folder.name }}
+                {{ file.title }}
               </div>
             </div>
             <div class="text-xs text-gray-600 dark:text-gray-300">
-              {{ new Date(folder.updatedAt).toLocaleDateString() }}
+              {{ new Date(file.updatedAt).toLocaleDateString() }}
             </div>
           </div>
         </div>
       </div>
       <div
-        v-for="(document, index) in documents"
-        :key="document.id"
-        :class="index < documents.length - 1 ? 'mb-2' : ''"
-      >
-        <div
-          class="cursor-pointer hover:dark:bg-gray-800/40 hover:bg-gray-200/40 p-2 rounded"
-          @click="useRouter().push(`/d/${document.id}`)"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <UIcon name="i-heroicons-document-text" class="mr-2" />
-              <div>{{ document.title ? document.title : "Untitled" }}</div>
-            </div>
-            <div class="text-xs text-gray-600 dark:text-gray-300">
-              {{ new Date(document.updatedAt).toLocaleDateString() }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-if="documents.length === 0 && folders.length === 0"
+        v-if="files.length === 0"
         class="text-center py-10 text-gray-600 dark:text-gray-300"
       >
         <UIcon name="i-heroicons-folder-open" class="text-4xl mb-4" />
@@ -77,7 +69,9 @@
     <FolderForm
       v-model="showFolderForm"
       :parent-folder-id="
-        slugs.length > 0 ? Number(slugs[slugs.length - 1]) : undefined
+        slugs.length > 0
+          ? Number(slugs[slugs.length - 1].split('--')[1])
+          : undefined
       "
     />
   </div>
@@ -93,51 +87,43 @@ const pages = computed(() => {
   if (slugs.value.length === 0) return pages;
   slugs.value.forEach((slug) => {
     pages.push({
-      name: slug,
+      name: slugToDisplayString(slug.split("--")[0]),
       to: pages[pages.length - 1].to + "/" + slug,
     });
   });
   return pages;
 });
 
-const folders = ref<{ id: number; name: string; updatedAt: string }[]>([]);
+const files = ref<
+  {
+    id: number;
+    title: string;
+    updatedAt: string;
+    type: "document" | "folder";
+  }[]
+>([]);
 
-async function getFolders() {
-  const { data } = await useFetch("/api/folders", {
+async function getFiles() {
+  const { data } = await useFetch("/api/files", {
     query:
       slugs.value.length > 0
-        ? { parentFolderId: slugs.value[slugs.value.length - 1] }
+        ? { folderId: slugs.value[slugs.value.length - 1].split("--")[1] }
         : undefined,
   });
-  folders.value = data.value?.folders ?? [];
+  files.value = data.value?.files ?? [];
 }
 
-await getFolders();
+await getFiles();
 
 const showFolderForm = ref(false);
 watch(
   () => showFolderForm.value,
   async (value) => {
     if (!value) {
-      await getFolders();
+      await getFiles();
     }
   }
 );
-
-const documents = ref<{ id: number; title: string; updatedAt: string }[]>([]);
-async function getDocuments() {
-  const { data } = await useFetch("/api/documents", {
-    query:
-      slugs.value.length > 0
-        ? {
-            folderId: slugs.value[slugs.value.length - 1],
-          }
-        : undefined,
-  });
-  documents.value = data.value?.documents ?? [];
-}
-
-await getDocuments();
 
 async function createDocument() {
   const { data } = await useFetch("/api/documents", {
@@ -145,13 +131,26 @@ async function createDocument() {
     body: JSON.stringify({
       folderId:
         slugs.value.length > 0
-          ? slugs.value[slugs.value.length - 1]
+          ? slugs.value[slugs.value.length - 1].split("--")[1]
           : undefined,
     }),
   });
   if (data.value) {
     await useRouter().push(`/d/${data.value.document.id}`);
   }
+}
+
+function stringToSlug(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[\s\W-]+/g, "-") // Replace spaces and non-word characters with dashes
+    .replace(/^-+|-+$/g, ""); // Remove leading and trailing dashes
+}
+
+function slugToDisplayString(slug: string) {
+  return slug
+    .replace(/-/g, " ") // Replace dashes with spaces
+    .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize the first letter of each word
 }
 </script>
 

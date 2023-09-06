@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     API_ROUTE_SECRET: process.env.API_ROUTE_SECRET,
+    openaiApiKey: "",
     public: {
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     },
