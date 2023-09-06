@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     },
   },
   colorMode: {
-    preference: "dark",
+    preference: "light",
   },
   auth: {
     origin:

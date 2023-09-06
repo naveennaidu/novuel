@@ -16,7 +16,7 @@
         >
           (Sign Out)
         </UButton>
-        <UButton
+        <!-- <UButton
           :icon="
             colorMode.value === 'dark' ? 'i-heroicons-sun' : 'i-heroicons-moon'
           "
@@ -27,7 +27,7 @@
               ? (colorMode.preference = 'light')
               : (colorMode.preference = 'dark')
           "
-        />
+        /> -->
       </div>
     </div>
     <NuxtPage />
@@ -42,7 +42,7 @@ useHead({
   },
 });
 
-const colorMode = useColorMode();
+// const colorMode = useColorMode();
 
 const { status, data, signOut } = useAuth();
 </script>
