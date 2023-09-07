@@ -22,6 +22,7 @@
 import { Editor } from "novel-vue";
 import { Editor as EditorType } from "@tiptap/core";
 import "novel-vue/dist/style.css";
+import { useStorage } from "@vueuse/core";
 
 definePageMeta({ middleware: "auth" });
 
@@ -33,10 +34,18 @@ const content = computed(() => {
   return JSON.parse(data.value?.document?.content ?? "{}");
 });
 
+watch(
+  () => content.value,
+  () => {
+    const data = useStorage(`novel-vue-${documentId.value}`, "{}");
+    data.value = JSON.stringify(content.value);
+  },
+  { deep: true, immediate: true }
+);
+
 async function update(e?: EditorType) {
   if (!e) return;
   const json = e.getJSON();
-  console.log(json);
   await useFetch(`/api/documents/${documentId.value}`, {
     method: "PUT",
     body: JSON.stringify({ content: JSON.stringify(json) }),
