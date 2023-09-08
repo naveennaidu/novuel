@@ -18,7 +18,7 @@
       Built with
       <div class="flex items-center justify-center gap-x-1">
         <UButton to="https://nuxt.com" target="_blank" variant="link">Nuxt 3</UButton>
-        <UButton to="https://ui.nuxtlabs.com" target="_blank" variant="link">Nuxt UI</UButton>
+        <UButton to="https://ui.nuxt.com" target="_blank" variant="link">Nuxt UI</UButton>
         <UButton to="https://github.com/naveennaidu/novel-vue" target="_blank" variant="link">Novel Vue</UButton>
       </div>
     </div>
